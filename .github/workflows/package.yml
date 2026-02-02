@@ -1,0 +1,55 @@
+name: package
+
+on:
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Build Windows exe
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: .\ReplayMod\gradlew.bat -p ReplayMod\libs\ReplayStudio createExe
+      - name: Package dmg
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          chmod +x ReplayMod/gradlew
+          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
+          jpackage --type dmg --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --app-version 1.0.0 --dest ReplayMod/libs/ReplayStudio/build/jpackage
+      - name: Package app-image
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          chmod +x ReplayMod/gradlew
+          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
+          jpackage --type app-image --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --dest ReplayMod/libs/ReplayStudio/build/jpackage
+          cd ReplayMod/libs/ReplayStudio/build/jpackage
+          tar -czf inventory-tool-gui-linux.tar.gz inventory-tool-gui
+      - name: Upload Windows exe
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-tool-gui-windows
+          path: ReplayMod/libs/ReplayStudio/build/launch4j/inventory-tool-gui.exe
+      - name: Upload dmg
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-tool-gui-macos
+          path: ReplayMod/libs/ReplayStudio/build/jpackage/*.dmg
+      - name: Upload app-image
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v4
+        with:
+          name: inventory-tool-gui-linux
+          path: ReplayMod/libs/ReplayStudio/build/jpackage/inventory-tool-gui-linux.tar.gz
