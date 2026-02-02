@@ -16,35 +16,24 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
-      - uses: actions/setup-java@v4
-        id: java8
-        with:
-          distribution: temurin
-          java-version: "8"
       - name: Build Windows exe
         if: runner.os == 'Windows'
         shell: pwsh
-        env:
-          GRADLE_OPTS: -Dorg.gradle.java.installations.paths=${{ steps.java8.outputs.path }}
-        run: .\ReplayMod\gradlew.bat -p ReplayMod\libs\ReplayStudio createExe
+        run: .\ReplayMod\gradlew.bat -p ReplayMod\libs\ReplayStudio createExe -PtoolchainVersion=17
       - name: Package dmg
         if: runner.os == 'macOS'
         shell: bash
-        env:
-          GRADLE_OPTS: -Dorg.gradle.java.installations.paths=${{ steps.java8.outputs.path }}
         run: |
           chmod +x ReplayMod/gradlew
-          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
+          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar -PtoolchainVersion=17
           "$JAVA_HOME/bin/jpackage" --version
           "$JAVA_HOME/bin/jpackage" --type dmg --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --app-version 1.0.0 --dest ReplayMod/libs/ReplayStudio/build/jpackage
       - name: Package app-image
         if: runner.os == 'Linux'
         shell: bash
-        env:
-          GRADLE_OPTS: -Dorg.gradle.java.installations.paths=${{ steps.java8.outputs.path }}
         run: |
           chmod +x ReplayMod/gradlew
-          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
+          ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar -PtoolchainVersion=17
           "$JAVA_HOME/bin/jpackage" --version
           "$JAVA_HOME/bin/jpackage" --type app-image --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --dest ReplayMod/libs/ReplayStudio/build/jpackage
           cd ReplayMod/libs/ReplayStudio/build/jpackage

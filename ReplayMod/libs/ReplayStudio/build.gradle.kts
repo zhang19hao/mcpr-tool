@@ -6,13 +6,15 @@ plugins {
     `maven-publish`
     id("gg.essential.defaults.java")
     id("xyz.wagyourtail.jvmdowngrader") version "0.7.2"
+    id("edu.sc.seis.launch4j") version "4.0.0"
 }
 
 group = "com.github.ReplayMod"
 description = "ReplayStudio"
 version = "master-SNAPSHOT"
 
-java.toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+val toolchainVersion = (project.findProperty("toolchainVersion")?.toString()?.toIntOrNull() ?: 8)
+java.toolchain.languageVersion.set(JavaLanguageVersion.of(toolchainVersion))
 
 repositories {
     mavenCentral()
@@ -117,4 +119,16 @@ tasks.register<Jar>("inventoryToolGuiJar") {
     manifest {
         attributes(mapOf("Main-Class" to "com.replaymod.replaystudio.tools.InventoryToolGui"))
     }
+}
+
+val inventoryToolGuiJar = tasks.named<Jar>("inventoryToolGuiJar")
+
+extensions.configure<groovy.lang.GroovyObject>("launch4j") {
+    setProperty("outfile", "inventory-tool-gui.exe")
+    setProperty("mainClassName", "com.replaymod.replaystudio.tools.InventoryToolGui")
+    setProperty("jarTask", inventoryToolGuiJar.get())
+}
+
+tasks.named("createExe") {
+    dependsOn(inventoryToolGuiJar)
 }
