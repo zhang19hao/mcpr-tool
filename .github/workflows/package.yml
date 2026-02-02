@@ -7,6 +7,7 @@ jobs:
   package:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
     steps:
@@ -25,14 +26,16 @@ jobs:
         run: |
           chmod +x ReplayMod/gradlew
           ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
-          jpackage --type dmg --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --app-version 1.0.0 --dest ReplayMod/libs/ReplayStudio/build/jpackage
+          "$JAVA_HOME/bin/jpackage" --version
+          "$JAVA_HOME/bin/jpackage" --type dmg --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --app-version 1.0.0 --dest ReplayMod/libs/ReplayStudio/build/jpackage
       - name: Package app-image
         if: runner.os == 'Linux'
         shell: bash
         run: |
           chmod +x ReplayMod/gradlew
           ./ReplayMod/gradlew -p ReplayMod/libs/ReplayStudio inventoryToolGuiJar
-          jpackage --type app-image --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --dest ReplayMod/libs/ReplayStudio/build/jpackage
+          "$JAVA_HOME/bin/jpackage" --version
+          "$JAVA_HOME/bin/jpackage" --type app-image --input ReplayMod/libs/ReplayStudio/build/libs --main-jar inventory-tool-gui.jar --name inventory-tool-gui --main-class com.replaymod.replaystudio.tools.InventoryToolGui --dest ReplayMod/libs/ReplayStudio/build/jpackage
           cd ReplayMod/libs/ReplayStudio/build/jpackage
           tar -czf inventory-tool-gui-linux.tar.gz inventory-tool-gui
       - name: Upload Windows exe
