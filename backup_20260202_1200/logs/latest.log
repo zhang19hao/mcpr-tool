@@ -1,0 +1,10 @@
+[11:32:55] [ServerMain/INFO]: Starting provider: vanilla/Biome Parameters
+[11:32:56] [ServerMain/INFO]: vanilla/Biome Parameters finished after 1239 ms
+[11:32:56] [ServerMain/INFO]: Starting provider: vanilla/Block List
+[11:32:57] [ServerMain/INFO]: vanilla/Block List finished after 864 ms
+[11:32:57] [ServerMain/INFO]: Starting provider: vanilla/Command Syntax
+[11:32:58] [ServerMain/INFO]: vanilla/Command Syntax finished after 791 ms
+[11:32:58] [ServerMain/INFO]: Starting provider: vanilla/Registry Dump
+[11:32:58] [ServerMain/INFO]: vanilla/Registry Dump finished after 102 ms
+[11:32:58] [ServerMain/INFO]: All providers took: 3038 ms
+[11:32:58] [ServerMain/INFO]: Caching: total files: 5, old count: 0, new count: 6, removed stale: 0, written: 5
