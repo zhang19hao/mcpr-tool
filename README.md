@@ -11,7 +11,7 @@
 
 1. 双击运行 `inventory-tool-gui.jar`
 2. 选择回放文件（`.mcpr`）
-3. 选择时间（默认 45分58秒，可自行调整）
+3. 选择时间（可自行调整）
 4. 点击“开始生成”
 5. 输出目录里会生成一个数据包文件夹，可直接放到世界的 datapacks 里
 
@@ -20,9 +20,16 @@
 - 电脑已安装 Java（建议 8 或以上）
 - 回放文件来自 ReplayMod
 
-## 打包方式
+## 版权说明
 
-运行 Gradle 任务 `inventoryToolGuiJar` 会生成可直接运行的 jar。
+- ReplayMod 使用 GPL-3.0 许可
+
+## 编译命令
+
+在项目根目录执行：
+```
+.\ReplayMod\gradlew.bat -p ReplayMod\libs\ReplayStudio inventoryToolGuiJar
+```
 
 ## 输出内容说明
 
