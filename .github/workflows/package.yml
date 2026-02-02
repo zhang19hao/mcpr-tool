@@ -5,6 +5,9 @@ on:
 
 jobs:
   package:
+    permissions:
+      contents: read
+      packages: write
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -16,6 +19,9 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - uses: oras-project/setup-oras@v1
+        with:
+          version: 1.3.0
       - name: Build Windows exe
         if: runner.os == 'Windows'
         shell: pwsh
@@ -44,15 +50,41 @@ jobs:
         with:
           name: inventory-tool-gui-windows
           path: ReplayMod/libs/ReplayStudio/build/launch4j/inventory-tool-gui.exe
+      - name: Publish Windows package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          REGISTRY: ghcr.io/${{ github.repository_owner }}/mcpr-tool
+        run: |
+          $token = "${{ secrets.GITHUB_TOKEN }}"
+          $token | oras login ghcr.io -u $env:GITHUB_ACTOR --password-stdin
+          oras push "$env:REGISTRY:windows" ReplayMod/libs/ReplayStudio/build/launch4j/inventory-tool-gui.exe
       - name: Upload dmg
         if: runner.os == 'macOS'
         uses: actions/upload-artifact@v4
         with:
           name: inventory-tool-gui-macos
           path: ReplayMod/libs/ReplayStudio/build/jpackage/*.dmg
+      - name: Publish macOS package
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          REGISTRY: ghcr.io/${{ github.repository_owner }}/mcpr-tool
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          DMG_PATH=$(ls ReplayMod/libs/ReplayStudio/build/jpackage/*.dmg | head -n 1)
+          oras push "${REGISTRY}:macos" "${DMG_PATH}"
       - name: Upload app-image
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@v4
         with:
           name: inventory-tool-gui-linux
           path: ReplayMod/libs/ReplayStudio/build/jpackage/inventory-tool-gui-linux.tar.gz
+      - name: Publish Linux package
+        if: runner.os == 'Linux'
+        shell: bash
+        env:
+          REGISTRY: ghcr.io/${{ github.repository_owner }}/mcpr-tool
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | oras login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          oras push "${REGISTRY}:linux" ReplayMod/libs/ReplayStudio/build/jpackage/inventory-tool-gui-linux.tar.gz
