@@ -1,7 +1,0 @@
-com.replaymod.replaystudio.filter.PacketCountFilter
-com.replaymod.replaystudio.filter.RemoveMobsFilter
-com.replaymod.replaystudio.filter.NeutralizerFilter
-com.replaymod.replaystudio.filter.RemoveFilter
-com.replaymod.replaystudio.filter.SquashFilter
-com.replaymod.replaystudio.filter.ChangeTimestampFilter
-com.replaymod.replaystudio.filter.JsonConverterFilter
